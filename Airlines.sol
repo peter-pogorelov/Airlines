@@ -58,11 +58,21 @@ contract Factory {
     function createUniOrder()  {
         if(AirlineApproval(validationBaseAddr).isTrustworthTA(msg.sender)) {
             agencyToOrders[msg.sender].push(new UniOrder(validationBaseAddr, msg.sender));
+        } else {
+            throw;
         }
     }
     
     function getLastContractId(address agency) constant returns (uint) {
-        return agencyToOrders[agency].length-1;
+        if(agencyToOrders[agency][0] != 0) {
+            return agencyToOrders[agency].length-1;
+        } else {
+            throw;
+        }
+    }
+    
+    function getLastContractById(address agency, uint id) constant returns (address) {
+        return agencyToOrders[agency][id];
     }
 }
 
@@ -156,8 +166,11 @@ contract UniOrder{
     
     //Get last registered flight destination
     function getLastFlightDestinationId() constant returns (uint) {
-        //-1 means there is not flight destinations
-        return flightDestinations.length - 1;    
+        if(flightDestinations[0] != 0) {
+            return flightDestinations.length-1;
+        } else {
+            throw;
+        }  
     }
     
     function getFlightDestination(uint id) constant returns (address) {
